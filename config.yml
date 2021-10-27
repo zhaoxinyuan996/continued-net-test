@@ -1,16 +1,18 @@
 target_ip:  # 目标域名/ip
   'baidu.com'
 count:      # 测试次数
-  20
+  10
 protocol:   # 协议
   - 'icmp'
 cell:       # 测试间隔
   1
 row_num:    # 保留最近n行记录
-  10
+  5
 string_length:  # 行长度，避免出现脏字符，出现脏字符就加长
   100
 show_pic:   # 是否展示折线图，1代表展示，0代表不展示
   0
 pic_dir:    # 生成折线图保存的文件夹
   './output'
+range:     #
+  'i < -1'

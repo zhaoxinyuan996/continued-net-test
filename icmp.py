@@ -2,7 +2,8 @@ import os
 import re
 import time
 
-from typing import Tuple
+from conf import config
+from typing import Tuple, Union, List
 
 
 class Icmp:
@@ -12,13 +13,14 @@ class Icmp:
     def __init__(self, target_ip):
         self.target_ip = target_ip
         self.res = []
+        self.enable = True
 
     def _finally_deal(self):
         max_delay = max(self.res or [0])
         for i in range(len(self.res)):
             self.res[i] = max_delay * 2
 
-    def _ping(self) -> Tuple[str, int]:
+    def _ping(self) -> Tuple[str, Union[int, str]]:
         res = os.popen('ping %s -n 1 | findstr "ms" | findstr ":"' % self.target_ip).read()
         res = re.findall(r'=([\d]+)ms', res)
         return time.strftime('%m-%d %H:%M:%S'), int(res[0]) if res else self._timeout
@@ -30,10 +32,18 @@ class Icmp:
 
     def test(self, count: int, cell: float, sync_queue):
         for _ in range(count):
-            self.res.append(self._ping())
-            sync_queue.put(self._ping())
+            if not self.enable:
+                sync_queue.put(0)
+                return
+            res = self._ping()
+            if config.range(res[1]):
+                self.res.append(res)
+                sync_queue.put(res)
+            else:
+                sync_queue.put((res[0], ' timeout ' + str(res[1])))
             time.sleep(cell)
-        sync_queue.put('end')
+        sync_queue.put(0)
+        self.enable = False
 
 
 if __name__ == '__main__':

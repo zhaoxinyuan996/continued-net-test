@@ -1,7 +1,7 @@
 import yaml
 import argparse
-from typing import List, Optional
 from pydantic import BaseModel, ValidationError
+from typing import List, Optional, Union, Callable
 
 parser = argparse.ArgumentParser()
 parser.usage = '123'
@@ -21,6 +21,7 @@ class Config(BaseModel):
     show_pic: bool
     pic_dir: str
     string_length: int
+    range: Union[str, Callable]
 
     def __init__(self):
         dic = {}
@@ -28,6 +29,7 @@ class Config(BaseModel):
             dic.update(yaml.load(f.read(), Loader=yaml.SafeLoader))
         dic.update({k: v for k, v in params.__dict__.items() if v is not None})
         super(Config, self).__init__(**dic)
+        exec('self.range=lambda i:' + self.range)
 
 
 try:
