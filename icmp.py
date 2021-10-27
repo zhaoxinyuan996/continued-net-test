@@ -1,14 +1,8 @@
 import os
 import re
-import subprocess
 import time
-import queue
-import threading
-from multiprocessing import Process
 
-from typing import Tuple, List
-
-import win32console
+from typing import Tuple
 
 
 class Icmp:
@@ -19,10 +13,15 @@ class Icmp:
         self.target_ip = target_ip
         self.res = []
 
+    def _finally_deal(self):
+        max_delay = max(self.res or [0])
+        for i in range(len(self.res)):
+            self.res[i] = max_delay * 2
+
     def _ping(self) -> Tuple[str, int]:
         res = os.popen('ping %s -n 1 | findstr "ms" | findstr ":"' % self.target_ip).read()
         res = re.findall(r'=([\d]+)ms', res)
-        return time.strftime('%Y-%m-%d %H:%M:%S'), int(res[0]) if res else self._timeout
+        return time.strftime('%m-%d %H:%M:%S'), int(res[0]) if res else self._timeout
 
     def first_ping(self) -> bool:
         res = os.popen('ping %s -n 1 | findstr "Ping"' % self.target_ip).read()

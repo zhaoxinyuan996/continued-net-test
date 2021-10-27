@@ -1,7 +1,7 @@
 target_ip:  # 目标域名/ip
   'baidu.com'
 count:      # 测试次数
-  1
+  20
 protocol:   # 协议
   - 'icmp'
 cell:       # 测试间隔

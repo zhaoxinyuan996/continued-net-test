@@ -1,20 +1,29 @@
 import os
+import sys
 import time
 import queue
-from sys import stdout
 
-import win32con
-import win32console
 from icmp import Icmp
 from conf import config
 from ctypes import CDLL
-from threading import Thread
-from typing import Tuple, List
-
 from pic import show, save
+from threading import Thread
+
+ascii_img = r'''
+╔═════════════════════════════════════════╗
+║            /)  (\                       ║
+║       .-._((,~~.))_.-,     //""""/""/   ║
+║        `-.   @@   ,-'     //    /  /    ║
+║          / ,o--o. \      //╲   /  /     ║
+║         ( ( .__. ) )    //   ╲/,,/      ║
+║          ) `----' (    //               ║
+║         /          \  ()                ║
+║        /            \//                 ║
+║       /              \                  ║
+╚═════════════════════════════════════════╝'''
 
 sync_queue = queue.Queue()
-cprint = CDLL('./so/cprint.so').cprint
+c_print = CDLL('./so/cprint.so').cprint
 
 
 class Job:
@@ -23,7 +32,11 @@ class Job:
 
     def __init__(self):
         self.str_buffer = ''
-        self.dir = os.path.join(os.path.dirname(__file__), config.pic_dir)
+        if getattr(sys, 'frozen', False):
+            self.dir = os.path.join(os.path.dirname(sys.executable), config.pic_dir)
+        elif __file__:
+            self.dir = os.path.join(os.path.dirname(__file__), config.pic_dir)
+
         self.icmp = Icmp(config.target_ip)
 
     def _before_run(self):
@@ -31,8 +44,11 @@ class Job:
         if not self.icmp.first_ping():
             raise Exception('第一次检查失败，请确认【域名/ip/dns】设置正确')
         if not os.path.isdir(self.dir):
-            raise Exception('请检查文件路径是否正确\n%s' % config.pic_dir)
+            print(self.dir)
+            raise Exception('请检查文件路径是否正确\n%s' % self.dir)
         print('状态正常，开始测试')
+        print(ascii_img)
+        print('power by 【战斧奶牛】')
         time.sleep(1)
         os.system("chcp 65001 & cls")
 
@@ -58,7 +74,7 @@ class Job:
             self._str_agg(self._rate_str % ('>' * int(count * 20 / config.count),
                         ' ' * (20 - int(count * 20 / config.count)),
                         str(count), str(config.count)))
-            cprint(self.str_buffer.encode())
+            c_print(self.str_buffer.encode())
             self.str_buffer = ''
             count += 1
 
@@ -69,6 +85,8 @@ class Job:
         print('保存中')
         save(x, y, self.dir, 'ICMP')
         print('运行完成')
+        print(ascii_img)
+        print('power by 【战斧奶牛】\n')
         os.system('pause')
 
     def run(self):
