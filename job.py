@@ -135,7 +135,8 @@ class Job:
         print('运行完成')
         print(ascii_img)
         print('power by 【战斧奶牛】\n')
-        os.system('pause')
+        if not config.unattended:
+            os.system('pause')
 
     def run(self):
         # 执行前确定满足基本参数条件
@@ -143,9 +144,13 @@ class Job:
         # 执行测速子线程
         self._add_job()
         # 执行主控制台子线程
-        Thread(target=self._main_job).start()
-        # 主线程监控键盘事件
-        self.monitor.catch(self.icmp)
+        t = Thread(target=self._main_job)
+        t.start()
+        if not config.unattended:
+            # 主线程监控键盘事件
+            self.monitor.catch(self.icmp)
+        else:
+            t.join()
         # 生成图片
         self._to_pic()
 

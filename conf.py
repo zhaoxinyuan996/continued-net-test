@@ -23,6 +23,7 @@ class Config(BaseModel):
     string_length: int
     datail_graph: int
     range: Union[str, Callable]
+    unattended: int
 
     def __init__(self):
         dic = {}
