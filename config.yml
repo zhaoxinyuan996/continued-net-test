@@ -2,9 +2,9 @@ target_ip:  # 目标域名/ip
   'baidu.com'
 count:      # 测试次数
   10
-protocol:   # 协议
+protocol:   # 协议，目前只支持icmp，勿动
   - 'icmp'
-cell:       # 测试间隔
+cell:       # 测试间隔，单位秒
   1
 row_num:    # 保留最近n行记录
   5
@@ -14,5 +14,7 @@ show_pic:   # 是否展示折线图，1代表展示，0代表不展示
   0
 pic_dir:    # 生成折线图保存的文件夹
   './output'
-range:     #
+datail_graph:  # 是否开启精确刻度，开启可使时间刻度不重叠，关闭可显著缩小图片宽度，低于1600条每条刻度都显示，超过1600条刻度会合并处理
+  0
+range:     # 简单的运算，满足此条件则记录至画布
   'i < -1'

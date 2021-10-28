@@ -129,9 +129,9 @@ class Job:
             return
         x, y = zip(*self.icmp.res)
         if config.show_pic:
-            show(x, y)
+            show(x, y, config.datail_graph)
         print('保存中')
-        save(x, y, self.dir, 'ICMP')
+        save(x, y, self.dir, 'ICMP', config.datail_graph)
         print('运行完成')
         print(ascii_img)
         print('power by 【战斧奶牛】\n')

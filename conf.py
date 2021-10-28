@@ -21,6 +21,7 @@ class Config(BaseModel):
     show_pic: bool
     pic_dir: str
     string_length: int
+    datail_graph: int
     range: Union[str, Callable]
 
     def __init__(self):
@@ -29,6 +30,7 @@ class Config(BaseModel):
             dic.update(yaml.load(f.read(), Loader=yaml.SafeLoader))
         dic.update({k: v for k, v in params.__dict__.items() if v is not None})
         super(Config, self).__init__(**dic)
+
         exec('self.range=lambda i:' + self.range)
 
 
