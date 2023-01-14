@@ -2,7 +2,6 @@ import os
 import sys
 import time
 import queue
-import keyboard
 
 from icmp import Icmp
 from conf import config
@@ -59,10 +58,8 @@ class Monitor:
     @staticmethod
     def catch(icmp: Icmp):
         while icmp.enable:
-            if keyboard.is_pressed('enter'):
-                icmp.enable = False
+            if not input():
                 return
-            time.sleep(0.01)
 
 
 class Job:
